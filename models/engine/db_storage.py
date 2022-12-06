@@ -11,6 +11,7 @@ from models.user import User
 from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+import sqlalchemy
 
 classes = {"Amenity": Amenity, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
@@ -40,10 +41,10 @@ class DBStorage:
         all objects depending of the class name
         """
         new_dict = {}
-        for a in classes:
-            if cls is None or cls is classes[a] or cls is a:
-                objects = self.__session.query(classes[a]).all()
-                for obj in objects:
+        for clss in classes:
+            if cls is None or cls is classes[clss] or cls is clss:
+                objs = self.__session.query(classes[clss]).all()
+                for obj in objs:
                     k = obj.__class__.__name__ + '.' + obj.id
                     new_dict[k] = obj
         return (new_dict)
@@ -64,7 +65,9 @@ class DBStorage:
      def reload(self):
          """reload the database"""
          Base.metadata.create_all(self.__engine)
-         self.__session = scoped_session(sessionmaker(bind=self.__engine))
+         s = sessionmaker(bind=self.__engine, expire_on_commit=False)
+         Session = scoped_session(s)
+         self.__session = Session
 
      def close(self):
          self.__session.remove()
