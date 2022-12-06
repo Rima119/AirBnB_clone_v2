@@ -16,7 +16,7 @@ class FileStorage:
         for key in FileStorage.__objects:
             obj_cls = FileStorage.__objects[key].__class__.__name__
             if cls == obj_cls:
-            obj[key] = FileStorage.__objects[key]
+                obj[key] = FileStorage.__objects[key]
         return obj
 
     def new(self, obj):
