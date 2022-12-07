@@ -15,12 +15,11 @@ class State(BaseModel, Base):
     name = Column(String(128), nullable=False)
     cities = relationship("City",  backref="state", cascade="delete")
 
-    if models.storage_type != "db":
-        @property
-        def cities(self):
-            city_list = []
-            all_cities = models.storage.all(City)
-            for city in all_cities.values():
-                if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
+    @property
+    def cities(self):
+        city_list = []
+        all_cities = models.storage.all(City)
+        for city in all_cities.values():
+            if city.state_id == self.id:
+                city_list.append(city)
+        return city_list
