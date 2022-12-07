@@ -35,7 +35,7 @@ class HBNBCommand(cmd.Cmd):
 
     def dic_create(self, args):
         """creates a dictionary from a list"""
-        dic = {}
+        new_dic = {}
         for arg in args:
             if "=" in arg:
                 vals_toa_add = arg.split('=', 1)
@@ -51,8 +51,8 @@ class HBNBCommand(cmd.Cmd):
                             value = float(value)
                         except:
                             continue
-                dic[key] = value
-        return (dic)
+                new_dic[key] = value
+        return (new_dic)
 
     def do_create(self, args):
         """Creates a new instance of BaseModel """
