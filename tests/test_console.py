@@ -16,7 +16,7 @@ from models.place import Place
 from models.review import Review
 from models.user import User
 from models import storage
-
+from connector_mysql import db, cur
 
 class TestConsole(unittest.TestCase):
     """Unittest for the console"""
@@ -25,10 +25,14 @@ class TestConsole(unittest.TestCase):
     def setUpClass(cls):
         """setup for the test"""
         cls.consol = HBNBCommand()
+        self.number_record = 0
+        cur.execute(f"USE {os.environ.get('DB_test')}")
 
     @classmethod
     def teardown(cls):
         del cls.consol
+        cur.close()
+        db.close()
 
     def tearDown(self):
         try:
@@ -91,6 +95,12 @@ class TestConsole(unittest.TestCase):
 
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd('create User email="abc@g.com" password="abcd"')
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd('create State name="California"')
+            cur.execute('INSERT INTO states (name) VALUES ("California")')
+            self.assertGreater(cur.rowcount, self.number_record)
+
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("all User")
             self.assertEqual("[[User]", f.getvalue()[:7])
