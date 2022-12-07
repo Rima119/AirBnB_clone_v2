@@ -13,13 +13,13 @@ from models.state import State
 from models.user import User
 import shlex
 
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
-
 
 class HBNBCommand(cmd.Cmd):
     """ HBNH console """
     prompt = '(hbnb) '
+    classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
+           "Place": Place, "Review": Review, "State": State, "User": User}
+
 
     def do_EOF(self, arg):
         """Exits console"""
@@ -33,39 +33,39 @@ class HBNBCommand(cmd.Cmd):
         """Quit command to exit the program"""
         return True
 
-    def _key_value_parser(self, args):
-        """creates a dictionary from a list of strings"""
-        new_dict = {}
+    def dic_create(self, args):
+        """creates a dictionary from a list"""
+        dic = {}
         for arg in args:
             if "=" in arg:
-                kvp = arg.split('=', 1)
-                key = kvp[0]
-                value = kvp[1]
+                vals_toa_add = arg.split('=', 1)
+                key = vals_toa_add[0]
+                value = vals_toa_add[1]
                 if value[0] == value[-1] == '"':
-                    value = shlex.split(value)[0].replace('_', ' ')
+                    value = value.replace('"', '').replace('_', ' ')
                 else:
                     try:
                         value = int(value)
-                    except Exception:
+                    except:
                         try:
                             value = float(value)
-                        except Exception:
+                        except:
                             continue
-                new_dict[key] = value
-        return new_dict
+                dic[key] = value
+        return (dic)
 
-    def do_create(self, arg):
-        """Creates a new instance of a class"""
-        args = arg.split()
+    def do_create(self, args):
+        """Creates a new instance of BaseModel """
+        args = args.split()
         if len(args) == 0:
             print("** class name missing **")
-            return False
-        if args[0] in classes:
-            new_dict = self._key_value_parser(args[1:])
-            instance = classes[args[0]](**new_dict)
+            return
+        if args[0] in HBNBCommand.classes:
+            dic = self.dic_creator(args[1:])
+            instance = HBNBCommand.classes[args[0]](**dic)
         else:
             print("** class doesn't exist **")
-            return False
+            return
         print(instance.id)
         instance.save()
 
@@ -75,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return False
-        if args[0] in classes:
+        if args[0] in HBNBCommand.classes:
             if len(args) > 1:
                 key = args[0] + "." + args[1]
                 if key in models.storage.all():
@@ -92,7 +92,7 @@ class HBNBCommand(cmd.Cmd):
         args = shlex.split(arg)
         if len(args) == 0:
             print("** class name missing **")
-        elif args[0] in classes:
+        elif args[0] in HBNBCommand.classes:
             if len(args) > 1:
                 key = args[0] + "." + args[1]
                 if key in models.storage.all():
@@ -111,8 +111,8 @@ class HBNBCommand(cmd.Cmd):
         obj_list = []
         if len(args) == 0:
             obj_dict = models.storage.all()
-        elif args[0] in classes:
-            obj_dict = models.storage.all(classes[args[0]])
+        elif args[0] in HBNBCommand.classes:
+            obj_dict = models.storage.all(HBNBCommand.classes[args[0]])
         else:
             print("** class doesn't exist **")
             return False
@@ -130,7 +130,7 @@ class HBNBCommand(cmd.Cmd):
         floats = ["latitude", "longitude"]
         if len(args) == 0:
             print("** class name missing **")
-        elif args[0] in classes:
+        elif args[0] in HBNBCommand.classes:
             if len(args) > 1:
                 k = args[0] + "." + args[1]
                 if k in models.storage.all():
