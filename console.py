@@ -27,7 +27,8 @@ class HBNBCommand(cmd.Cmd):
     types = {
              'number_rooms': int, 'number_bathrooms': int,
              'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
+             'latitude': float, 'longitude': float,
+             'name': str
             }
 
     def preloop(self):
@@ -87,7 +88,7 @@ class HBNBCommand(cmd.Cmd):
 
     def postcmd(self, stop, line):
         """Prints if isatty is false"""
-        if not sys.__stdin__.isatty():
+        if not sys.__stdin__.isatty(): #detecter un entrée sur le stdin
             print('(hbnb) ', end='')
         return stop
 
@@ -112,34 +113,66 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        try:
-            model, *arg = args.split()
-            args = {}
-            for v in arg:
-                k = v[:v.find('=')]
-                val = v[v.find('=') + 1:].replace('"', '').replace('_', ' ')
-                args[k] = val
-        except Exception:
-            model = args
-        if not model:
-            print("** class name missing **")
-            return
-        elif model not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        if type(args) is dict:
-            new_instance = HBNBCommand.classes[model](**args)
+    @staticmethod
+    def verify_type_value(value):
+        """ Verify the type and return value"""
+        pattern = ['_', '"\\"']
+        if isinstance(value, str):
+            result = ""
+            if value.find(pattern[0]) != -1:
+                result = value.replace(pattern[0], " ")
+            if value.find('"') != -1:
+                result = value.replace('"', pattern[1] + '"')
+            return (result)
+        elif isinstance(value, str) and isinstance(float(value), float):
+            result = float(value)
+            return result
+        elif isinstance(value, str) and isinstance(int(value), int):
+            result = int(value)
+            return result
         else:
-            new_instance = HBNBCommand.classes[model]()
-        new_instance.save()
-        print(new_instance.id)
+            return value
+
+
+    def check_parameter_parser(self, arg):
+        """ Check validity params"""
+        new_dict = {}
+        if (len(arg) < 1):
+            return new_dict
+        for arg_ in arg:
+            key, value = arg_.split('=', 1)
+            if key not in HBNBCommand.types.keys():
+                print(f"<attribute {key} does not exist **")
+                return new_dict
+            else:
+                result = self.verify_type_value(value)
+                new_dict[key] = result
+        return new_dict
+        
+    def do_create(self, arg):
+        """ Create an object of any class"""
+        dic_parameter = {}
+        args = arg.split()
+        if len(args) == 0:
+            print("**class name missing**")
+            return
+        elif args[0] not in HBNBCommand.classes.keys():
+            print("**class doesn't exist**")
+            return
+        else:
+            try:
+                dic_parameter = self.check_parameter_parser(args[1:])
+            except SyntaxError:
+                print("parameter error, please Entry the commande <help create>")
+                return
+            new_instance = HBNBCommand.classes[args[0]](**dic_parameter)
+            new_instance.save()
+            print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
+        print("[Usage]: create <className> <key>=<value>\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
