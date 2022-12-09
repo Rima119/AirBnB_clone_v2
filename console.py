@@ -28,7 +28,7 @@ class HBNBCommand(cmd.Cmd):
              'number_rooms': int, 'number_bathrooms': int,
              'max_guest': int, 'price_by_night': int,
              'latitude': float, 'longitude': float,
-             'name': str
+             'name': str, 'city_id': str, 'user_id': str
             }
 
     def preloop(self):
@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -88,7 +88,7 @@ class HBNBCommand(cmd.Cmd):
 
     def postcmd(self, stop, line):
         """Prints if isatty is false"""
-        if not sys.__stdin__.isatty(): #detecter un entrée sur le stdin
+        if not sys.__stdin__.isatty():  # detecter un entrée sur le stdin
             print('(hbnb) ', end='')
         return stop
 
@@ -133,7 +133,6 @@ class HBNBCommand(cmd.Cmd):
         else:
             return value
 
-
     def check_parameter_parser(self, arg):
         """ Check validity params"""
         new_dict = {}
@@ -148,7 +147,7 @@ class HBNBCommand(cmd.Cmd):
                 result = self.verify_type_value(value)
                 new_dict[key] = result
         return new_dict
-        
+
     def do_create(self, arg):
         """ Create an object of any class"""
         dic_parameter = {}
@@ -163,7 +162,7 @@ class HBNBCommand(cmd.Cmd):
             try:
                 dic_parameter = self.check_parameter_parser(args[1:])
             except SyntaxError:
-                print("parameter error, please Entry the commande <help create>")
+                print("parameter error")
                 return
             new_instance = HBNBCommand.classes[args[0]](**dic_parameter)
             new_instance.save()
@@ -315,7 +314,7 @@ class HBNBCommand(cmd.Cmd):
                 args.append(v)
         else:  # isolate args
             args = args[2]
-            if args and args[0] is '\"':  # check for quoted arg
+            if args and args[0] == '\"':  # check for quoted arg
                 second_quote = args.find('\"', 1)
                 att_name = args[1:second_quote]
                 args = args[second_quote + 1:]
@@ -323,10 +322,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] is not ' ':
+            if not att_name and args[0] != ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] is '\"':
+            if args[2] and args[2][0] == '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
@@ -362,6 +361,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
