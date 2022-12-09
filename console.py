@@ -115,7 +115,7 @@ class HBNBCommand(cmd.Cmd):
 
     @staticmethod
     def verify_type_value(value):
-        """Verify the type and return value"""
+        """ Verify the type and return value"""
         pattern = ['_', '"\\"']
         if isinstance(value, str):
             result = ""
