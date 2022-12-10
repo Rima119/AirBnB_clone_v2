@@ -10,7 +10,7 @@ from models.state import State
 from models.user import User
 from os import getenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, Session, sessionmaker
 import sqlalchemy
 
 classes = {"Amenity": Amenity, "City": City,
@@ -32,10 +32,10 @@ class DBStorage:
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
                                       HBNB_MYSQL_USER, HBNB_MYSQL_PWD,
                                       HBNB_MYSQL_HOST, HBNB_MYSQL_DB))
-        
+
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
-    
+
     def all(self, cls=None):
         """query on the current database session
         all objects depending of the class name
@@ -49,25 +49,24 @@ class DBStorage:
                     new_dict[k] = obj
         return (new_dict)
 
-     def new(self, obj):
-         """add the object to the current database session"""
-         self.__session.add(obj)
+    def new(self, obj):
+        """add the object to the current database session"""
+        self.__session.add(obj)
 
-     def save(self):
-         """commit all changes of the current database session"""
-         self.__session.commit()
+    def save(self):
+        """commit all changes of the current database session"""
+        self.__session.commit()
 
-     def delete(self, obj=None):
-         """delete from the current database session obj if not None"""
-         if obj is not None:
-             self.__session.delete(obj)
+    def delete(self, obj=None):
+        """delete from the current database session obj if not None"""
+        if obj is None:
+            return
 
-     def reload(self):
-         """reload the database"""
-         Base.metadata.create_all(self.__engine)
-         s = sessionmaker(bind=self.__engine, expire_on_commit=False)
-         Session = scoped_session(s)
-         self.__session = Session
+        self.__session.delete(obj)
 
-     def close(self):
-         self.__session.remove()
+    def reload(self):
+        """reload the database"""
+        Base.metadata.create_all(self.__engine)
+        s = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(s)
+        self.__session = Session
