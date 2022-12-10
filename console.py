@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -113,60 +114,41 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    @staticmethod
-    def verify_type_value(value):
-        """ Verify the type and return value"""
-        pattern = ['_', '"\\"']
-        if isinstance(value, str):
-            result = ""
-            if value.find(pattern[0]) != -1:
-                result = value.replace(pattern[0], " ")
-            if value.find('"') != -1:
-                result = value.replace('"', pattern[1] + '"')
-            return (result)
-        elif isinstance(value, str) and isinstance(float(value), float):
-            result = float(value)
-            return result
-        elif isinstance(value, str) and isinstance(int(value), int):
-            result = int(value)
-            return result
-        else:
-            return value
-
-    def check_parameter_parser(self, arg):
-        """ Check validity params"""
+    def key_value_parser(self, args):
+        """creates a dictionary from a list of strings"""
         new_dict = {}
-        if (len(arg) < 1):
-            return new_dict
-        for arg_ in arg:
-            key, value = arg_.split('=', 1)
-            if key not in HBNBCommand.types.keys():
-                print(f"<attribute {key} does not exist **")
-                return new_dict
-            else:
-                result = self.verify_type_value(value)
-                new_dict[key] = result
+        for arg in args:
+            if "=" in arg:
+                sp = arg.split('=', 1)
+                key = sp[0]
+                value = sp[1]
+                if value[0] == value[-1] == '"':
+                    value = shlex.split(value)[0].replace('_', ' ')
+                else:
+                    try:
+                        value = int(value)
+                    except Exception:
+                        try:
+                            value = float(value)
+                        except Exception:
+                            continue
+                new_dict[key] = value
         return new_dict
 
     def do_create(self, arg):
         """ Create an object of any class"""
-        dic_parameter = {}
         args = arg.split()
         if len(args) == 0:
-            print("**class name missing**")
-            return
-        elif args[0] not in HBNBCommand.classes.keys():
-            print("**class doesn't exist**")
-            return
+            print("** class name missing **")
+            return False
+        if args[0] in HBNBCommand.classes:
+            new_dict = self.key_value_parser(args[1:])
+            instance = HBNBCommand.classes[args[0]](**new_dict)
         else:
-            try:
-                dic_parameter = self.check_parameter_parser(args[1:])
-            except SyntaxError:
-                print("parameter error")
-                return
-            new_instance = HBNBCommand.classes[args[0]](**dic_parameter)
-            new_instance.save()
-            print(new_instance.id)
+            print("** class doesn't exist **")
+            return False
+        print(instance.id)
+        instance.save()
 
     def help_create(self):
         """ Help information for the create method """

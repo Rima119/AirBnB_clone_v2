@@ -16,7 +16,10 @@ from models.place import Place
 from models.review import Review
 from models.user import User
 from models import storage
-from connector_mysql import db, cur
+from models.engine.db_storage import DBStorage
+from models.engine.file_storage import FileStorage
+from io import StringIO
+
 
 class TestConsole(unittest.TestCase):
     """Unittest for the console"""
@@ -94,7 +97,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(msg, f.getvalue())
 
         with patch("sys.stdout", new=StringIO()) as f:
-            self.HBNB.onecmd("create State")
+            self.consol.onecmd("create State")
             st = f.getvalue().strip()
 
         with patch('sys.stdout', new=StringIO()) as f:
