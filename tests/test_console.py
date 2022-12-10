@@ -93,6 +93,10 @@ class TestConsole(unittest.TestCase):
             self.consol.onecmd("create abcdef")
             self.assertEqual(msg, f.getvalue())
 
+        with patch("sys.stdout", new=StringIO()) as f:
+            self.HBNB.onecmd("create State")
+            st = f.getvalue().strip()
+
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd('create User email="abc@g.com" password="abcd"')
 
