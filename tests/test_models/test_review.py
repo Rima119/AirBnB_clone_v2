@@ -1,29 +1,40 @@
 #!/usr/bin/python3
-""" """
-from tests.test_models.test_base_model import test_basemodel
+""" Unittests for models/review.py """
+from models.base_model import Base, BaseModel
 from models.review import Review
+import unittest
+import os
+import pep8
 
 
-class test_review(test_basemodel):
-    """ """
+class TestReview(unittest.TestCase):
+    """ Unittests for testing the Review model """
 
-    def __init__(self, *args, **kwargs):
-        """ """
-        super().__init__(*args, **kwargs)
-        self.name = "Review"
-        self.value = Review
+    @classmethod
+    def setUpClass(cls):
+        """set up for test"""
+        cls.rev = Review()
 
-    def test_place_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.place_id), str)
+    def tearDown(self):
+        try:
+            os.remove("file.json")
+        except Exception:
+            pass
 
-    def test_user_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.user_id), str)
+    def test_pep8_Review(self):
+        """Tests pep8 style"""
+        style = pep8.StyleGuide(quiet=True)
+        r = style.check_files(['models/review.py'])
+        self.assertEqual(r.total_errors, 0, "fix pep8")
 
-    def test_text(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.text), str)
+    def test_docstrings(self):
+        """Check for docstrings"""
+        self.assertIsNotNone(Review.__doc__)
+
+    def test_is_subclass_Review(self):
+        """check if review is subclass of BaseModel"""
+        self.assertTrue(issubclass(self.rev.__class__, BaseModel), True)
+
+
+if __name__ == "__main__":
+    unittest.main()

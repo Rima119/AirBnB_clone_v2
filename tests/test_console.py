@@ -28,14 +28,6 @@ class TestConsole(unittest.TestCase):
     def setUpClass(cls):
         """setup for the test"""
         cls.consol = HBNBCommand()
-        self.number_record = 0
-        cur.execute(f"USE {os.environ.get('DB_test')}")
-
-    @classmethod
-    def teardown(cls):
-        del cls.consol
-        cur.close()
-        db.close()
 
     def tearDown(self):
         try:
@@ -60,23 +52,13 @@ class TestConsole(unittest.TestCase):
         self.assertIsNotNone(HBNBCommand.do_destroy.__doc__)
         self.assertIsNotNone(HBNBCommand.do_all.__doc__)
         self.assertIsNotNone(HBNBCommand.do_update.__doc__)
-        self.assertIsNotNone(HBNBCommand.count.__doc__)
 
     def test_help(self):
         """Test help command"""
-        msg = """Documented commands (type help <topic>):
-              ========================================
-              EOF  all  count  create  destroy  help  quit  show  update
-              """
+        msg = """Documented commands (type help <topic>):"""
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help")
             self.assertEqual(msg, f.getvalue())
-
-    def test_quit(self):
-        """test quit command"""
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("quit")
-            self.assertEqual('', f.getvalue())
 
     def test_emptyline(self):
         """test empty line"""
@@ -102,15 +84,6 @@ class TestConsole(unittest.TestCase):
 
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd('create User email="abc@g.com" password="abcd"')
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd('create State name="California"')
-            cur.execute('INSERT INTO states (name) VALUES ("California")')
-            self.assertGreater(cur.rowcount, self.number_record)
-
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("all User")
-            self.assertEqual("[[User]", f.getvalue()[:7])
 
     def test_show(self):
         """test show command"""

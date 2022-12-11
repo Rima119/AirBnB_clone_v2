@@ -1,0 +1,47 @@
+#!/usr/bin/python3
+"""unittests for models/engine/db_storage.py"""
+import unittest
+import pep8
+import json
+import os
+from models.base_model import Base
+from models.engine.db_storage import DBStorage
+from models.engine.file_storage import FileStorage
+
+
+class TestDBStorage(unittest.TestCase):
+    """Unittests for testing the DBStorage"""
+
+    @classmethod
+    def setUpClass(self):
+        """set up"""
+        self.User = getenv("HBNB_MYSQL_USER")
+        self.Passwd = getenv("HBNB_MYSQL_PWD")
+        self.Db = getenv("HBNB_MYSQL_DB")
+        self.Host = getenv("HBNB_MYSQL_HOST")
+        self.db = MySQLdb.connect(host=self.Host, user=self.User,
+                                  passwd=self.Passwd, db=self.Db,
+                                  charset="utf8")
+        self.query = self.db.cursor()
+        self.storage = DBStorage()
+        self.storage.reload()
+
+    def test_pep8_DBStorage(self):
+        """Test pep8 styling."""
+        style = pep8.StyleGuide(quiet=True)
+        d = style.check_files(['models/engine/db_storage.py'])
+        self.assertEqual(d.total_errors, 0, "fix pep8")
+
+    def test_docstrings(self):
+        """Check for docstrings"""
+        self.assertIsNotNone(DBStorage.__doc__)
+        self.assertIsNotNone(DBStorage.__init__.__doc__)
+        self.assertIsNotNone(DBStorage.all.__doc__)
+        self.assertIsNotNone(DBStorage.new.__doc__)
+        self.assertIsNotNone(DBStorage.save.__doc__)
+        self.assertIsNotNone(DBStorage.delete.__doc__)
+        self.assertIsNotNone(DBStorage.reload.__doc__)
+
+
+if __name__ == "__main__":
+    unittest.main()
