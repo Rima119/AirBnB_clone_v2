@@ -53,13 +53,6 @@ class TestConsole(unittest.TestCase):
         self.assertIsNotNone(HBNBCommand.do_all.__doc__)
         self.assertIsNotNone(HBNBCommand.do_update.__doc__)
 
-    def test_help(self):
-        """Test help command"""
-        msg = """Documented commands (type help <topic>):"""
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("help")
-            self.assertEqual(msg, f.getvalue())
-
     def test_emptyline(self):
         """test empty line"""
         with patch('sys.stdout', new=StringIO()) as f:
