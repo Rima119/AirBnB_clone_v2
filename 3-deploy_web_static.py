@@ -22,6 +22,7 @@ def do_pack():
     else:
         return None
 
+
 def do_deploy(archive_path):
     """distributes an archive to your web servers"""
     if os.path.isfile(archive_path) is False:
@@ -54,6 +55,7 @@ def do_deploy(archive_path):
            format(name)).failed is True:
         return False
     return True
+
 
 def deploy():
     """
