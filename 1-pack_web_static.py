@@ -7,12 +7,12 @@ from fabric.api import local
 
 def do_pack():
     """return the archive path if the archive has been correctly generated"""
-    try:
-        date = datetime.now().strftime("%Y%m%d%H%M%S")
-        if isdir("versions") is False:
-            local("mkdir -p versions")
-        archive_path = "versions/web_static_{}.tgz".format(date)
-        local("tar -cvzf {} web_static".format(archive_path))
+    local("mkdir -p versions")
+    date = datetime.now().strftime("%Y%m%d%H%M%S")
+    archive_path = "versions/web_static_{}.tgz".format(date)
+    gzip_archive = local("tar -cvzf {} web_static".format(archive_path))
+
+    if gzip_archive.succeeded:
         return archive_path
-    except Exception:
+    else:
         return None
