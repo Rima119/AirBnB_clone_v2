@@ -13,7 +13,7 @@ def do_clean(number=0):
     archive = sorted(os.listdir("versions"))
     [archive.pop() for i in range(number)]
     with lcd("versions"):
-        [local("rm ./{}".format(a)) for n in archive]
+        [local("rm ./{}".format(n)) for n in archive]
     with cd("/data/web_static/releases"):
         archive = run("ls -tr").split()
         archive = [n for n in archive if "web_static_" in n]
