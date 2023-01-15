@@ -4,7 +4,7 @@ import models
 import sqlalchemy
 from models.base_model import BaseModel, Base
 from models.city import City
-from os import getenv
+import os
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -19,7 +19,7 @@ class State(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    if getenv('HBNB_TYPE_STORAGE', '') != 'db':
+    if os.environ.get('HBNB_TYPE_STORAGE') != 'db':
         @property
         def cities(self):
             city_list = []
