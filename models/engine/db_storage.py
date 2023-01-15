@@ -21,6 +21,7 @@ class DBStorage:
     """DBStorage Class"""
     __engine = None
     __session = None
+    Session = None
 
     def __init__(self):
         """Instantiate a DBStorage object"""
