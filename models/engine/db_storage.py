@@ -73,5 +73,5 @@ class DBStorage:
 
     def close(self):
         """call remove() method"""
-        self.reload()
-        self.__session.close()
+        self.Session.remove()
+        self.__session = self.Session()
