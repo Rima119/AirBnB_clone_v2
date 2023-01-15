@@ -21,7 +21,6 @@ class DBStorage:
     """DBStorage Class"""
     __engine = None
     __session = None
-    Session = None
 
     def __init__(self):
         """Instantiate a DBStorage object"""
@@ -73,6 +72,5 @@ class DBStorage:
         self.__session = Session
 
     def close(self):
-        """call remove() method"""
-        self.Session.remove()
-        self.__session = self.Session()
+        """call close() method"""
+        self.__session.close()
