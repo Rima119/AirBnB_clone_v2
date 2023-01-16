@@ -1,8 +1,13 @@
 #!/usr/bin/python3
-"""script that starts a Flask web application"""
+"""script that starts a Flask web application:
+   web application must be listening on 0.0.0.0, port 5000
+   Routes:
+       /states_list: display a HTML page: (inside the tag BODY)
+"""
 from models import storage
 from models.state import State
 from flask import Flask, render_template
+
 app = Flask(__name__)
 
 
@@ -20,4 +25,5 @@ def teardown(exc):
 
 
 if __name__ == '__main__':
+    """Main function"""
     app.run(host='0.0.0.0', port='5000')
