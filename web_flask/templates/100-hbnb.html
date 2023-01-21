@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<HTML lang="en">
+  <HEAD>
+    <META charset="utf-8">
+    <TITLE>AirBnB clone</TITLE>
+    <LINK rel="stylesheet" href="../static/styles/4-common.css">
+    <LINK rel="stylesheet" href="../static/styles/3-header.css">
+    <LINK rel="stylesheet" href="../static/styles/3-footer.css">
+    <LINK rel="stylesheet" href="../static/styles/6-filters.css">
+    <LINK rel="icon" href="../static/images/icon.png">
+  </HEAD>
+
+  <BODY>
+    <HEADER>
+      <div class="logo"></div>
+    </HEADER>
+    <div class="container">
+      <SECTION class="filters">
+	<BUTTON>Search</BUTTON>
+	<div class="locations">
+	  <H3>States</H3>
+	  <H4>&nbsp;</H4>
+	  <div class="popover">
+	    <UL>
+            {% for state in states.values()|sort(attribute="name") %}
+	      <LI><STRONG>{{ state.name }}</STRONG>
+	        <UL>
+		{% for city in state.cities|sort(attribute="name") %}
+		  <LI>{{ city.name }}</LI>
+		{% endfor %}
+		</UL>
+	      </LI>
+	    {% endfor %}
+	    </UL>
+	  </div>
+
+	</div><div class="amenities">
+          <H3>Amenities</H3>
+	  <H4>&nbsp;</H4>
+	  <UL class="popover">
+	  {% for amenity in amenities.values()|sort(attribute="name") %}
+	    <LI>{{ amenity.name }}</LI>
+	  {% endfor %}
+	  </UL>
+	</div>
+      </SECTION>
+      <SECTION class="places">
+	    <h1>Places</h1>
+	    {% for place in places.values()|sort(attribute="name") %}
+	    <article>
+		<div>
+		  <h2>{{ place.name }}</h2>
+		  <div class="price_by_night">&#36;{{ place.price_by_night }}</div>
+		</div>
+		<div class="information">
+		  <div class="max_guest">
+		    <div class="guest_icon"></div>
+		      <p>{{ place.max_guest }}</p>
+		  </div>
+		  <div class="number_rooms">
+		    <div class="bed_icon"></div>
+		    <p>{{ place.number_rooms }}</p>
+		  </div>
+		  <div class="number_bathrooms">
+	            <div class="bath_icon"></div>
+		    <p>{{ place.number_bathrooms }}</p>
+		  </div>
+		</div>
+		<div><b>Owner</b>{{ place.user.first_name }} {{ place.user.last_name }}</div>
+		<div class="description">
+			{{ place.description|safe }}
+		</div>
+		<div class="amenities">
+	          <h2>Amenities</h2>
+		  {% for amenity in place.amenities|sort(attribute="name") %}
+		  <UL>
+	            <LI><P>{{ amenity.name }}</P></LI>
+		  </UL>
+		  {% endfor %}
+		</div>
+
+		<div class="reviews">
+		  <h2>{{ place.reviews.__len__() }} Reviews</h2>
+		  {% for review in place.reviews %}
+		  <h3>From {{ review.user.first_name }} the {{ review.created_at.date().__str__() }}</h3>
+		  <UL>
+	             <LI><P>{{ review.text|safe }}</P></LI>
+		  </UL>
+		  {% endfor %}
+		</div>
+	    </article>
+	    {% endfor %}
+      </SECTION>
+    </div>
+    <FOOTER>
+      Holberton School
+    </FOOTER>
+  </BODY>
+</HTML>
